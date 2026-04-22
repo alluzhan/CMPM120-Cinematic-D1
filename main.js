@@ -181,6 +181,15 @@ class Outside extends Phaser.Scene {
             });
         });
 
+        this.tweens.add({
+            targets: [cafeButton, buttonText],
+            scale: 1.03,    
+            duration: 800,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
         this.sound.play('rain', { loop: true, volume: 0.5 });
 
     }
