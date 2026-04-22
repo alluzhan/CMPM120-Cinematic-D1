@@ -269,8 +269,16 @@ class Menu extends Phaser.Scene {
         menu.setScale(0.55);
         menu.setDepth(10);
 
+        let menuText = this.add.text(centerX + 60, 550, "Click menu to open",{
+            fontSize: "16px",
+            color: "#ffffff"
+        });
+        menuText.setDepth(10);
+
         //only show buttons after animation is done
         menu.on("animationcomplete", () => {
+            menuText.setVisible(false);
+
             let button1 = this.add.rectangle(centerX + 135, centerY - 150, 170, 40, 0xF8D1A0).setInteractive();
             let buttonText1 = this.add.text(centerX + 135, centerY - 150, "Start", {
                 fontSize: "20px",
