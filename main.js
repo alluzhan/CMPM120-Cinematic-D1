@@ -1,20 +1,83 @@
-class Intro extends Phaser.Scene {
+class Preload extends Phaser.Scene {
     constructor() {
-        super('intro');
+        super('preload');
     }
     preload(){
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        //make progress bar
+        let progressBox = this.add.graphics();
+        progressBox.fillStyle(0xffffff, 0.5);
+        progressBox.fillRoundedRect(centerX - 160, centerY - 15, 320, 30, 10);
+
+        let progressBar = this.add.graphics();
+
+        let loadingText = this.add.text(centerX, centerY - 50, 'loading...', {
+            fontSize: '24px',
+            fill: '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+
+        let percentText = this.add.text(centerX, centerY, '0%', {
+            fontSize: '18px',
+            fill: '#ffffff'
+        }).setOrigin(0.5).setDepth(1);
+
+        //change percent bar
+        this.load.on('progress', (value) => {
+            percentText.setText(parseInt(value * 100) + '%');
+            progressBar.clear();
+            progressBar.fillStyle(0x8F88CF, 1);
+            progressBar.fillRoundedRect(centerX - 155, centerY - 10, 310 * value, 20, 8);
+        });
+
+        this.load.on('complete', () => {
+            loadingText.setText('Ready! (๑>◡<๑)');
+            this.time.delayedCall(2000, () => {
+                this.scene.start('intro');
+            });
+        });
+       
+        //logo animation frames
         this.load.path = 'assets/logoAnimation/';
         for (let i = 1; i <=34; i++){
             this.load.image("logo-" + i, "logo-" + i + ".png");
         }
+
+        //load images
         this.load.path = 'assets/images/';
         this.load.image('rain', 'rain.png');
+        this.load.image('Coffee_and_Tea_Shop', 'Coffee_and_Tea_Shop.jpg');
+        this.load.image('cafeInside', 'cafeInside.jpg');
+        this.load.image('wood', 'wood.png');
 
+        //load sounds
         this.load.path = 'assets/sounds/';
         this.load.audio('pop', 'pop.mp3');
         this.load.audio('bell', 'bell.mp3');
+        this.load.audio('cafeMusic', 'cafeMusic.mp3');
+        this.load.audio('rain', 'rain.mp3');
+
+        //menu animation frames
+        this.load.path = 'assets/menuAnimation/';
+        for (let i = 1; i <=36; i++){
+            this.load.image("menu-" + i, "menu-" + i + ".png");
+        } 
+        
     }
     create(){
+        //this.scene.start('intro');
+    }  
+}
+
+class Intro extends Phaser.Scene {
+    constructor() {
+        super('intro');
+    }
+    create(){
+        this.sound.unlock(); //unlocks sound so audio can play at the correct time/frames
+
         //sets screen center
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
@@ -78,6 +141,7 @@ class Intro extends Phaser.Scene {
         this.pane.lineBetween(centerX - 310, centerY - 105, centerX + 310, centerY - 105);
         this.pane.lineBetween(centerX - 310, centerY + 105, centerX + 310, centerY + 105);
 
+
     }
     update(){
     
@@ -87,13 +151,6 @@ class Intro extends Phaser.Scene {
 class Outside extends Phaser.Scene {
     constructor() {
         super('outside');
-    }
-    preload(){
-        this.load.path = 'assets/images/';
-        this.load.image('Coffee_and_Tea_Shop', 'Coffee_and_Tea_Shop.jpg');
-
-        this.load.path = 'assets/sounds/';
-        this.load.audio('rain', 'rain.mp3');
     }
     create(){
         this.cameras.main.setBackgroundColor('#ACBDAD');
@@ -126,7 +183,6 @@ class Outside extends Phaser.Scene {
 
         this.sound.play('rain', { loop: true, volume: 0.5 });
 
-
     }
     update(){
     
@@ -137,16 +193,7 @@ class Inside extends Phaser.Scene {
     constructor() {
         super('inside');
     }
-    preload(){
-        this.load.path = 'assets/images/';
-        this.load.image('cafeInside', 'cafeInside.jpg');
-
-        this.load.path = 'assets/sounds/';
-        this.load.audio('cafeMusic', 'cafeMusic.mp3');
-    }
     create(){
-        this.graphics = this.add.graphics();
-
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
         this.cameras.main.setBackgroundColor('#000000'); 
@@ -154,6 +201,25 @@ class Inside extends Phaser.Scene {
 
         this.sound.play('cafeMusic', { loop: true, volume: 0.5 });
 
+        let text2 = this.add.text(centerX - 225, centerY + 195, "The smell of freshly ground coffee beans fills the air. As you settle into your seat, you open the menu, ready to choose your next flavorful adventure.",{
+            fontSize: "16px",
+            color: "#000000",
+            wordWrap: { width: 480 },
+            align: 'center'
+        });
+        text2.setDepth(10);
+
+        //create background for text
+        let backgroundOutline = this.add.ellipse(centerX, centerY + 220, 565, 125, 0xffffff);
+        let textBackground = this.add.ellipse(centerX, centerY + 220, 550, 110, 0xBDACBC);
+
+        //go to next scene
+        this.time.delayedCall(10000, () => {
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
+            this.cameras.main.on("camerafadeoutcomplete", () => {
+                this.scene.start("menu");
+            });
+        });
 
 
     }
@@ -166,15 +232,93 @@ class Menu extends Phaser.Scene {
     constructor() {
         super('menu');
     }
-    preload(){
-        this.load.path = 'assets/';
-    }
     create(){
-        this.cameras.main.setBackgroundColor('#ffffff');
-        this.graphics = this.add.graphics();
 
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
+
+        this.add.image(centerX, centerY, 'wood').setScale(0.5);
+
+        //play animation when player clicks on menu/sprite image
+        let menuFrames = [];
+        for (let i = 1; i <= 36; i++){
+            menuFrames.push({key: "menu-" + i});
+        }
+
+        this.anims.create({
+            key: "menuAnim",
+            frames: menuFrames,
+            frameRate: 10,
+            repeat: 0
+        });
+
+        let menu = this.add.sprite(centerX+20, centerY, "menu-1");
+        menu.setInteractive();
+        menu.on("pointerdown", () => {
+            menu.play("menuAnim");
+        });
+        menu.setScale(0.55);
+        menu.setDepth(10);
+
+        //only show buttons after animation is done
+        menu.on("animationcomplete", () => {
+            let button1 = this.add.rectangle(centerX + 135, centerY - 150, 170, 40, 0xF8D1A0).setInteractive();
+            let buttonText1 = this.add.text(centerX + 135, centerY - 150, "Start", {
+                fontSize: "20px",
+                color: "#000000"
+            }).setOrigin(0.5);
+            button1.setDepth(10);
+            buttonText1.setDepth(10);
+
+            let button2 = this.add.rectangle(centerX + 135, centerY - 80, 170, 40, 0xF8D1A0).setInteractive();
+            let buttonText2 = this.add.text(centerX + 135, centerY - 80, "Options", {
+                fontSize: "20px",
+                color: "#000000"
+            }).setOrigin(0.5);
+            button2.setDepth(10);
+            buttonText2.setDepth(10);
+
+            let button3 = this.add.rectangle(centerX + 135, centerY, 170, 40, 0xF8D1A0).setInteractive();
+            let buttonText3 = this.add.text(centerX + 135, centerY, "Credits", {
+                fontSize: "20px",
+                color: "#000000"
+            }).setOrigin(0.5);
+            button3.setDepth(10);
+            buttonText3.setDepth(10);
+
+            let button4 = this.add.rectangle(centerX + 135, centerY + 80, 170, 40, 0xF8D1A0).setInteractive();
+            let buttonText4 = this.add.text(centerX + 135, centerY + 80, "Quit", {
+                fontSize: "20px",
+                color: "#000000"
+            }).setOrigin(0.5);
+            button4.setDepth(10);
+            buttonText4.setDepth(10);
+
+            button1.on("pointerdown", () => {
+                this.cameras.main.fadeOut(1000, 0, 0, 0);
+                this.sound.stopAll();
+            });
+
+            button2.on("pointerdown", () => {
+                this.cameras.main.fadeOut(1000, 0, 0, 0);
+                this.sound.stopAll();
+            });
+
+            button3.on("pointerdown", () => {
+                this.cameras.main.fadeOut(1000, 0, 0, 0);
+                this.cameras.main.on("camerafadeoutcomplete", () => {
+                    this.scene.start("credits");
+                    this.sound.stopAll();
+                });
+            });
+
+            button4.on("pointerdown", () => {
+                window.close();
+            });
+
+
+        });
+
     }
     update(){
     
@@ -185,12 +329,39 @@ class Credits extends Phaser.Scene {
     constructor() {
         super('credits');
     }
-    preload(){
-        this.load.path = 'assets/';
-    }
     create(){
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
+
+        let creditsTitle = this.add.text(85, 40, "Credits:", {
+            fontSize: "30px",
+            color: "#000000"
+        }).setOrigin(0.5);
+
+        const createCredit = (y, title, linkUrl) => {
+            this.add.text(40, y, title, {
+                fontSize: "16px",
+                color: "#000000"
+            }).setOrigin(0, 0.5);
+
+            // Clickable Link
+            let link = this.add.text(40, y + 25, "Source Link", {
+                fontSize: "14px",
+                color: "#ffffff",
+                textDecoration: 'underline'
+            }).setOrigin(0, 0.5);
+
+            link.setInteractive({ useHandCursor: true });
+            link.on('pointerdown', () => window.open(linkUrl, '_blank'));
+         
+        };
+
+        createCredit(80, "Cafe Background Art - Rainee.rainy", "https://www.instagram.com/p/CxCtCO4Pji_/");
+        createCredit(140, "Cafe BGM - Denis-Pavlov-Music", "https://pixabay.com/music/smooth-jazz-cozy-relax-jazz-podcast-coffee-ambiance-271621/");
+        createCredit(200, "Cafe Inside Background - Vecteezy", "https://www.vecteezy.com/vector-art/36155331-pixel-art-illustration-coffeeshop-background");
+        createCredit(260, "Small Bell SFX - OxidVideos", "https://pixabay.com/sound-effects/film-special-effects-ding-small-bell-sfx-233008/");
+        createCredit(320, "Gentle Rain - DRAGON-STUDIO", "https://pixabay.com/sound-effects/nature-gentle-rain-07-437321/");
+        createCredit(380, "Pop SFX - u_8e8ungop1x", "https://pixabay.com/sound-effects/film-special-effects-pop-268648/");
     }
     update(){
     
@@ -202,7 +373,7 @@ let config = {
     width: 800,
     height: 600,
     backgroundColor: "#88A4CF",
-    scene: [Intro, Outside, Inside, Menu, Credits]
+    scene: [Preload, Intro, Outside, Inside, Menu, Credits]
 }
 
 let game = new Phaser.Game(config);
