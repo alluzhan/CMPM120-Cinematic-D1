@@ -5,11 +5,11 @@ Cinematic Requirements
 3+ scenes: My D1 Cinematic has a total of 6 scenes, which are Preload, Intro, Outside, Inside, Menu, and Credits.
 
 2+ audio assets: The cinematic uses a total of four audio assets; the bell and pop sound are used with my logo animation in\
-the intro scene. The rain sounds are played in the outside scene, and the cafe music is played throughout the inside\
+the intro scene. The rain sounds are played in the outside scene, and the cafe music is played throughout the inside
 and menu scene
 
-2+ image assets: I used an image assets for the outside and inside scenes by other artists mentioned in the credits. The\
-intro and menu scenes use assets that I created for the logo and menu book. I used Procreate to draw the assets out, and I\
+2+ image assets: I used an image assets for the outside and inside scenes by other artists mentioned in the credits. The
+intro and menu scenes use assets that I created for the logo and menu book. I used Procreate to draw the assets out, and I
 used the Procreate animation tool to create the animation PNGs.
 
 2+ geometric shapes: The intro scene utilizes a rectangle and lines to create a window behind the logo. Additionally, an ellipse\
