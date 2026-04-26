@@ -321,11 +321,13 @@ class Menu extends Phaser.Scene {
             button1.on("pointerdown", () => {
                 this.cameras.main.fadeOut(1000, 0, 0, 0);
                 this.sound.stopAll();
+                this.scene.start("return");
             });
 
             button2.on("pointerdown", () => {
                 this.cameras.main.fadeOut(1000, 0, 0, 0);
                 this.sound.stopAll();
+                this.scene.start("return");
             });
 
             button3.on("pointerdown", () => {
@@ -386,11 +388,62 @@ class Credits extends Phaser.Scene {
         createCredit(260, "Small Bell SFX - OxidVideos", "https://pixabay.com/sound-effects/film-special-effects-ding-small-bell-sfx-233008/");
         createCredit(320, "Gentle Rain - DRAGON-STUDIO", "https://pixabay.com/sound-effects/nature-gentle-rain-07-437321/");
         createCredit(380, "Pop SFX - u_8e8ungop1x", "https://pixabay.com/sound-effects/film-special-effects-pop-268648/");
+
+        //add return to menu button
+        let returnButton = this.add.ellipse(150, centerY + 200, 200, 50, 0xffffff).setInteractive();
+        let buttonText = this.add.text(150, centerY + 200, "Return to Menu", {
+            fontSize: "15px",
+            color: "#000000"
+        }).setOrigin(0.5);
+
+        returnButton.on("pointerdown", () => {
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
+            this.cameras.main.on("camerafadeoutcomplete", () => {
+                this.scene.start("menu");
+            });
+        });
+
     }
     update(){
     
     }
 }
+
+class Return extends Phaser.Scene {
+    constructor() {
+        super('return');
+    }
+    create(){
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        let returnText = this.add.text(centerX, centerY - 100, "The demo is over, thank you for playing!", {
+            fontSize: "24px",
+            color: "#000000"
+        }).setOrigin(0.5);
+
+        //either return to menu or close game
+        let returnButton = this.add.rectangle(centerX - 20, centerY - 20, 200, 50, 0xffffff).setInteractive();
+        let buttonText = this.add.text(centerX - 20, centerY - 20, "Return to Menu", {
+            fontSize: "15px",
+            color: "#000000"
+        }).setOrigin(0.5);
+
+        returnButton.on("pointerdown", () => {
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
+            this.cameras.main.on("camerafadeoutcomplete", () => {
+                this.scene.start("menu");
+            });
+        });
+
+
+    }
+    update(){
+            
+    }
+}
+
+
 
 let config = {
     type: Phaser.WEBGL,
@@ -398,7 +451,7 @@ let config = {
     height: 600,
     parent: "root",
     backgroundColor: "#88A4CF",
-    scene: [Preload, Intro, Outside, Inside, Menu, Credits]
+    scene: [Preload, Intro, Outside, Inside, Menu, Credits, Return]
 }
 
 let game = new Phaser.Game(config);
