@@ -25,3 +25,5 @@ and the menu buttons.
 
 1+ object motion animation: In the outside scene, there is an enter the cafe button which has a breathing tween effect. This makes it\
 so that it is emphasized to players that they should click on it.
+
+hello
